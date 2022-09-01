@@ -33,10 +33,6 @@ cp env-example .env
 
 Change `DATABASE_HOST=postgres` to `DATABASE_HOST=localhost`
 
-## Automatic update of dependencies
-
-If you want to automatically update dependencies, you can connect [Renovate](https://github.com/marketplace/renovate) for your project.
-
 ## Database utils
 
 Generate migration
