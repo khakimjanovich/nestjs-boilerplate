@@ -16,7 +16,6 @@ import { Status } from "../../statuses/entities/status.entity";
 import { FileEntity } from "../../files/entities/file.entity";
 import * as bcrypt from "bcryptjs";
 import { EntityHelper } from "src/bootstrap/utils/entity-helper";
-import { AuthProvidersEnum } from "../../auth/auth-providers.enum";
 
 @Entity()
 export class User extends EntityHelper {
@@ -31,9 +30,6 @@ export class User extends EntityHelper {
 
   @Column({ nullable: true })
   password: string;
-
-  @Column({ default: AuthProvidersEnum.email })
-  provider: string;
 
   @Index()
   @Column({ nullable: true })

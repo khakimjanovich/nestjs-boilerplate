@@ -5,11 +5,11 @@ import {
   Index,
   ManyToOne,
   PrimaryGeneratedColumn,
-  DeleteDateColumn,
-} from 'typeorm';
-import { User } from '../../users/entities/user.entity';
-import { Allow } from 'class-validator';
-import { EntityHelper } from 'src/bootstrap/utils/entity-helper';
+  DeleteDateColumn
+} from "typeorm";
+import { User } from "../../users/entities/user.entity";
+import { Allow } from "class-validator";
+import { EntityHelper } from "src/bootstrap/utils/entity-helper";
 
 @Entity()
 export class Forgot extends EntityHelper {
@@ -23,7 +23,7 @@ export class Forgot extends EntityHelper {
 
   @Allow()
   @ManyToOne(() => User, {
-    eager: true,
+    eager: true
   })
   user: User;
 

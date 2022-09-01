@@ -11,20 +11,16 @@ import * as crypto from "crypto";
 import { plainToClass } from "class-transformer";
 import { Status } from "../statuses/entities/status.entity";
 import { Role } from "../roles/entities/role.entity";
-import { AuthProvidersEnum } from "./auth-providers.enum";
-import { SocialInterface } from "src/bootstrap/social/interfaces/social.interface";
 import { AuthRegisterLoginDto } from "./dto/auth-register-login.dto";
 import { UsersService } from "../users/users.service";
 import { ForgotService } from "../forgot/forgot.service";
-import { MailService } from "../mail/mail.service";
 
 @Injectable()
 export class AuthService {
   constructor(
     private jwtService: JwtService,
     private usersService: UsersService,
-    private forgotService: ForgotService,
-    private mailService: MailService
+    private forgotService: ForgotService
   ) {
   }
 
@@ -45,18 +41,6 @@ export class AuthService {
           status: HttpStatus.UNPROCESSABLE_ENTITY,
           errors: {
             email: "notFound"
-          }
-        },
-        HttpStatus.UNPROCESSABLE_ENTITY
-      );
-    }
-
-    if (user.provider !== AuthProvidersEnum.email) {
-      throw new HttpException(
-        {
-          status: HttpStatus.UNPROCESSABLE_ENTITY,
-          errors: {
-            email: `needLoginViaProvider:${user.provider}`
           }
         },
         HttpStatus.UNPROCESSABLE_ENTITY
@@ -88,63 +72,6 @@ export class AuthService {
     }
   }
 
-  async validateSocialLogin(
-    authProvider: string,
-    socialData: SocialInterface
-  ): Promise<{ token: string; user: User }> {
-    let user: User;
-    const socialEmail = socialData.email?.toLowerCase();
-
-    const userByEmail = await this.usersService.findOne({
-      email: socialEmail
-    });
-
-    user = await this.usersService.findOne({
-      socialId: socialData.id,
-      provider: authProvider
-    });
-
-    if (user) {
-      if (socialEmail && !userByEmail) {
-        user.email = socialEmail;
-      }
-      await this.usersService.update(user.id, user);
-    } else if (userByEmail) {
-      user = userByEmail;
-    } else {
-      const role = plainToClass(Role, {
-        id: RoleEnum.user
-      });
-      const status = plainToClass(Status, {
-        id: StatusEnum.active
-      });
-
-      user = await this.usersService.create({
-        email: socialEmail,
-        firstName: socialData.firstName,
-        lastName: socialData.lastName,
-        socialId: socialData.id,
-        provider: authProvider,
-        role,
-        status
-      });
-
-      user = await this.usersService.findOne({
-        id: user.id
-      });
-    }
-
-    const jwtToken = this.jwtService.sign({
-      id: user.id,
-      role: user.role
-    });
-
-    return {
-      token: jwtToken,
-      user
-    };
-  }
-
   async register(dto: AuthRegisterLoginDto): Promise<void> {
     const hash = crypto
       .createHash("sha256")
@@ -163,12 +90,6 @@ export class AuthService {
       hash
     });
 
-    await this.mailService.userSignUp({
-      to: user.email,
-      data: {
-        hash
-      }
-    });
   }
 
   async confirmEmail(hash: string): Promise<void> {
@@ -220,12 +141,6 @@ export class AuthService {
         user
       });
 
-      await this.mailService.forgotPassword({
-        to: email,
-        data: {
-          hash
-        }
-      });
     }
   }
 

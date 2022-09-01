@@ -6,43 +6,44 @@ import {
   Response,
   UploadedFile,
   UseGuards,
-  UseInterceptors,
-} from '@nestjs/common';
-import { FileInterceptor } from '@nestjs/platform-express';
-import { ApiBearerAuth, ApiBody, ApiConsumes, ApiTags } from '@nestjs/swagger';
-import { AuthGuard } from '@nestjs/passport';
-import { FilesService } from './files.service';
+  UseInterceptors
+} from "@nestjs/common";
+import { FileInterceptor } from "@nestjs/platform-express";
+import { ApiBearerAuth, ApiBody, ApiConsumes, ApiTags } from "@nestjs/swagger";
+import { AuthGuard } from "@nestjs/passport";
+import { FilesService } from "./files.service";
 
-@ApiTags('Files')
+@ApiTags("Files")
 @Controller({
-  path: 'files',
-  version: '1',
+  path: "files",
+  version: "1"
 })
 export class FilesController {
-  constructor(private readonly filesService: FilesService) {}
+  constructor(private readonly filesService: FilesService) {
+  }
 
   @ApiBearerAuth()
-  @UseGuards(AuthGuard('jwt'))
-  @Post('upload')
-  @ApiConsumes('multipart/form-data')
+  @UseGuards(AuthGuard("jwt"))
+  @Post("upload")
+  @ApiConsumes("multipart/form-data")
   @ApiBody({
     schema: {
-      type: 'object',
+      type: "object",
       properties: {
         file: {
-          type: 'string',
-          format: 'binary',
-        },
-      },
-    },
+          type: "string",
+          format: "binary"
+        }
+      }
+    }
   })
-  @UseInterceptors(FileInterceptor('file'))
+  @UseInterceptors(FileInterceptor("file"))
   async uploadFile(@UploadedFile() file) {
     return this.filesService.uploadFile(file);
   }
 
-  @Get(':path')
-  download(@Param('path') path, @Response() response) {
-    return response.sendFile(path, { root: './files' });
+  @Get(":path")
+  download(@Param("path") path, @Response() response) {
+    return response.sendFile(path, { root: "./files" });
   }
 }

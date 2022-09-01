@@ -4,7 +4,8 @@ import { TypeOrmModuleOptions, TypeOrmOptionsFactory } from "@nestjs/typeorm";
 
 @Injectable()
 export class TypeOrmConfigService implements TypeOrmOptionsFactory {
-  constructor(private configService: ConfigService) {}
+  constructor(private configService: ConfigService) {
+  }
 
   createTypeOrmOptions(): TypeOrmModuleOptions {
     return {
@@ -24,7 +25,7 @@ export class TypeOrmConfigService implements TypeOrmOptionsFactory {
       cli: {
         entitiesDir: "src",
         migrationsDir: "src/database/migrations",
-        subscribersDir: "subscriber",
+        subscribersDir: "subscriber"
       },
       extra: {
         // based on https://node-postgres.com/api/pool
@@ -32,15 +33,15 @@ export class TypeOrmConfigService implements TypeOrmOptionsFactory {
         max: this.configService.get("database.maxConnections"),
         ssl: this.configService.get("database.sslEnabled")
           ? {
-              rejectUnauthorized: this.configService.get(
-                "database.rejectUnauthorized"
-              ),
-              ca: this.configService.get("database.ca") ?? undefined,
-              key: this.configService.get("database.key") ?? undefined,
-              cert: this.configService.get("database.cert") ?? undefined,
-            }
-          : undefined,
-      },
+            rejectUnauthorized: this.configService.get(
+              "database.rejectUnauthorized"
+            ),
+            ca: this.configService.get("database.ca") ?? undefined,
+            key: this.configService.get("database.key") ?? undefined,
+            cert: this.configService.get("database.cert") ?? undefined
+          }
+          : undefined
+      }
     } as TypeOrmModuleOptions;
   }
 }

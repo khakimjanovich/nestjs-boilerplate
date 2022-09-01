@@ -1,21 +1,21 @@
-import { PartialType } from '@nestjs/swagger';
-import { CreateUserDto } from './create-user.dto';
+import { PartialType } from "@nestjs/swagger";
+import { CreateUserDto } from "./create-user.dto";
 
-import { Transform } from 'class-transformer';
-import { ApiProperty } from '@nestjs/swagger';
-import { Role } from '../../roles/entities/role.entity';
-import { IsEmail, IsOptional, MinLength, Validate } from 'class-validator';
-import { Status } from '../../statuses/entities/status.entity';
-import { IsNotExist } from 'src/bootstrap/utils/validators/is-not-exists.validator';
-import { FileEntity } from '../../files/entities/file.entity';
-import { IsExist } from 'src/bootstrap/utils/validators/is-exists.validator';
+import { Transform } from "class-transformer";
+import { ApiProperty } from "@nestjs/swagger";
+import { Role } from "../../roles/entities/role.entity";
+import { IsEmail, IsOptional, MinLength, Validate } from "class-validator";
+import { Status } from "../../statuses/entities/status.entity";
+import { IsNotExist } from "src/bootstrap/utils/validators/is-not-exists.validator";
+import { FileEntity } from "../../files/entities/file.entity";
+import { IsExist } from "src/bootstrap/utils/validators/is-exists.validator";
 
 export class UpdateUserDto extends PartialType(CreateUserDto) {
-  @ApiProperty({ example: 'test1@example.com' })
+  @ApiProperty({ example: "test1@example.com" })
   @Transform(({ value }) => value?.toLowerCase().trim())
   @IsOptional()
-  @Validate(IsNotExist, ['User'], {
-    message: 'emailAlreadyExists',
+  @Validate(IsNotExist, ["User"], {
+    message: "emailAlreadyExists"
   })
   @IsEmail()
   email?: string | null;
@@ -29,32 +29,32 @@ export class UpdateUserDto extends PartialType(CreateUserDto) {
 
   socialId?: string | null;
 
-  @ApiProperty({ example: 'John' })
+  @ApiProperty({ example: "John" })
   @IsOptional()
   firstName?: string | null;
 
-  @ApiProperty({ example: 'Doe' })
+  @ApiProperty({ example: "Doe" })
   @IsOptional()
   lastName?: string | null;
 
   @ApiProperty({ type: () => FileEntity })
   @IsOptional()
-  @Validate(IsExist, ['FileEntity', 'id'], {
-    message: 'imageNotExists',
+  @Validate(IsExist, ["FileEntity", "id"], {
+    message: "imageNotExists"
   })
   photo?: FileEntity | null;
 
   @ApiProperty({ type: Role })
   @IsOptional()
-  @Validate(IsExist, ['Role', 'id'], {
-    message: 'roleNotExists',
+  @Validate(IsExist, ["Role", "id"], {
+    message: "roleNotExists"
   })
   role?: Role | null;
 
   @ApiProperty({ type: Status })
   @IsOptional()
-  @Validate(IsExist, ['Status', 'id'], {
-    message: 'statusNotExists',
+  @Validate(IsExist, ["Status", "id"], {
+    message: "statusNotExists"
   })
   status?: Status;
 
